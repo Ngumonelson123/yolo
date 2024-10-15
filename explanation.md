@@ -166,5 +166,5 @@ To achieve the task the following git workflow was used:
 12. Deployed the containers using docker compose:
 `docker compose up`
 
-13. Created explanation.md file and modified it as the commit messages in the repo will explain.
+13. Created explanation.md file and modified it as the commit messages in the repo will explain the project.
 
