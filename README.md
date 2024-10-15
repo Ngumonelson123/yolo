@@ -17,17 +17,16 @@ Install the docker engine here:
 
 ## Clone the repository:
 
-bash
 Copy code
-git clone https://github.com/Ngumonelson123/yolo.git
-cd yolo
-Build the Docker image:
+- git clone https://github.com/Ngumonelson123/yolo.git
+- cd yolo
+# Build the Docker image:
+
+
+Copy code
+- docker build -t yolo-app .
+- Run the Docker container:
 
 bash
 Copy code
-docker build -t yolo-app .
-Run the Docker container:
-
-bash
-Copy code
-docker run -d -p 80:80 yolo-ap
+- docker run -d -p 80:80 yolo-ap
