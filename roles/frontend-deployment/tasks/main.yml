@@ -1,0 +1,9 @@
+# roles/frontend-deployment/tasks/main.yml
+- name: Run Frontend Container
+  docker_container:
+    name:  ngumo-client
+    image: ngumonelson123/ngumo-client:v1.1.0
+    state: started
+    ports:
+      - "3000:3000"
+  when: docker_installed.changed == false
