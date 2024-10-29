@@ -28,10 +28,18 @@ To run this application, you need to have the following installed:
 
 ## How to Launch the Application
 
-![Alt text](VBOX.png)
+![Alt text](Vagrant.png)
+
+
+
+![Alt text](Ansible.png)
+
 
 
 ![Alt text](GCP.png)
+
+
+
 ### Stage One: Launch Using Vagrant on VirtualBox
 
 1. **Clone the Repository**
