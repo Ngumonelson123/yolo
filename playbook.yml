@@ -1,5 +1,4 @@
----
-- name: Ansible playbook to dockerize and run yolo e-commerce app using ansible
+- name: Ansible playbook to dockerize and run Yolo e-commerce app using Ansible
   hosts: all
   become: true
 
@@ -27,9 +26,14 @@
         name: app-net
         state: present
 
-  roles: 
-    - frontend-deployment
-    - setup-mongodb   
-    - backend-deployment
+  roles:
+    - role: setup-mongodb
+    - role: frontend-deployment
+    - role: backend-deployment
 
+  tasks:
+    # Removed Kubernetes deployment tasks
+
+  post_tasks:
+    # Removed verification tasks for Kubernetes services
 

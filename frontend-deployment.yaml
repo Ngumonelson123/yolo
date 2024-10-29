@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ngumonelson123/ngumo-frontend:v1.1.0
+          image: ngumonelson123/ngumo-client:v1.1.0
+          command: ["npm", "start"] 
           ports:
             - containerPort: 3000
           resources:
@@ -26,7 +27,6 @@ spec:
             requests:
               memory: "128Mi"
               cpu: "250m"
-
 ---
 apiVersion: v1
 kind: Service
@@ -38,5 +38,7 @@ spec:
     app: frontend
   ports:
     - protocol: TCP
-      port: 3000  # Port exposed by the service
-      targetPort: 3000  # Port on the container
+      port: 3000
+      targetPort: 3000
+      nodePort: 30100
+  
