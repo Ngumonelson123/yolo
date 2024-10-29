@@ -1,14 +1,9 @@
----
+# roles/setup-mongodb/tasks/main.yml
 - name: Run MongoDB Container
   docker_container:
-    name: app-mongo
-    image: mongo
+    name: mongodb
+    image: mongo:latest
+    state: started
     ports:
-      - '27017:27017'
-    volumes:
-      - ./app-mongo-data:/data/db
-    networks:
-      - name: app-net
-  tags:
-    - database
-    - backend
+      - "27017:27017"
+  when: docker_installed.changed == false
