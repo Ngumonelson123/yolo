@@ -8,3 +8,4 @@ vault.yml
 .vscode/*
 .vscode/*.json
 .terraform/
+stage_two/terraform/
