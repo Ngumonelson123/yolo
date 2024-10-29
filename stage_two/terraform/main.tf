@@ -1,5 +1,9 @@
 provider "google" {
+ stage_two
+  credentials = file("home/nelson-ngumo/Documents/burnished-ether-439413-s1-d95e648991d9.json") # Replace with your service account key path
+=======
   credentials = file("/home/nelson-ngumo/Documents/burnished-ether-439413-s1-579bee90267c.json") # Replace with your service account key path
+ master
   project     = var.project_id
   region      = var.region
 }
@@ -17,6 +21,13 @@ resource "google_compute_instance" "app_server" {
 
   network_interface {
     network = "default"
+ stage_two
+    access_config {
+      // Include this to give the VM an external IP
+    }
+  }
+
+=======
     access_config {} # Allows external IP
   }
 
@@ -53,6 +64,7 @@ resource "google_compute_instance" "app_server" {
   }
 
   # Output IP for Ansible inventory
+ master
   provisioner "local-exec" {
     command = "echo '${google_compute_instance.app_server.network_interface[0].access_config[0].nat_ip}' > ../ansible/hosts"
   }

@@ -37,6 +37,8 @@ variable "image_project" {
   type        = string
   default     = "ubuntu-os-cloud" # Default project for Ubuntu images
 }
+ stage_two
+=======
 
 # Docker image variables
 variable "backend_image" {
@@ -56,3 +58,4 @@ variable "database_image" {
   type        = string
   default     = "mongo:latest"
 }
+ master
