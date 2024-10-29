@@ -1,0 +1,4 @@
+---
+container_name: ngumo-client
+network: app-net
+volume: app-mongo-data/app
