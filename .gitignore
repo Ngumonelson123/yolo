@@ -22,3 +22,4 @@ vault.yml
 terraform.tfstate.backup
 .terraform/
 .vagrant/machines/default/virtualbox/private_key
+stage_two/terraform/.terraform.lock.hcl
