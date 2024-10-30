@@ -21,3 +21,4 @@ vault.yml
 .vscode/*.json
 terraform.tfstate.backup
 .terraform/
+.vagrant/machines/default/virtualbox/private_key
