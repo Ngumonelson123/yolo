@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ngumonelson123/ngumo-client:v1.1.0
+          image: ngumonelson123/ngumo-client:v1.1.1
           command: ["npm", "start"] 
           ports:
             - containerPort: 3000
