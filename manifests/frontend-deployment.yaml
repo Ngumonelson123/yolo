@@ -24,8 +24,8 @@ spec:
           value: "http://yolo-backend:5000"
         resources:
           requests:
-            memory: "64Mi"
-            cpu: "50m"
+            memory: "500Mi"
+            cpu: "200m"
           limits:
-            memory: "64Mi"
-            cpu: "50m"
+            memory: "1Gi"
+            cpu: "500m"
