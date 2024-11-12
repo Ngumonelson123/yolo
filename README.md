@@ -211,8 +211,14 @@ used `docker image ls` to check images have tags as follows.
   - `ngumonelson123/ngumo-client:v1.1.2`
   - `ngumonelson123/ngumo-backend:v1.1.1`
 
-  !["Docker tags"](dockerhub-client-image-tag.png)
-  !["Docker tags"](dockerhub-backend-image-tag.png)
+ ![Docker tags](images/dockerhub-backend-image-tag.png)
+
+![Docker tags](images/dockerhub-backend-image-tag.png)
+
+## 8. GCP image tag to show k8 clusters created and deployed
+![GCP tags](images/pvc volumes.png)
+
+![GCP tags](images/my cluster nodes.png)
 
 
 ## Orchestration IP  4
@@ -228,6 +234,15 @@ used `docker image ls` to check images have tags as follows.
     kubectl apply -f frontend-deployment.yaml
     kubectl apply -f frontend-service.yaml
 ```
+
+
+
+
+
+
+
+
+
 ## 2. Confirm  deployments
 Confirm the status of the services:
 
