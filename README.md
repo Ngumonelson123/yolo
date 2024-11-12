@@ -1,138 +1,268 @@
-# YOLO Application Containerization and Deployment
+# Requirements
+Make sure that you have the following installed:
+- [node](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04) 
+- npm 
+- [MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/) and start the mongodb service with `sudo service mongod start`
 
-This project involves the containerization and deployment of a full-stack YOLO application using **Docker** and **Terraform**. The application consists of a React frontend, a Node.js backend, and a MongoDB database.
+## Navigate to the Client Folder 
+ `cd client`
 
-## Overview
+## Run the folllowing command to install the dependencies 
+ `npm install`
 
-The application architecture includes:
+## Run the folllowing to start the app
+ `npm start`
 
-- **Frontend**: A React application serving as the user interface, allowing users to interact with the application easily.
-- **Backend**: A Node.js application handling API requests and business logic, providing a robust and scalable server-side environment.
-- **Database**: A MongoDB database for data persistence, ensuring that user data and application states are stored and retrieved efficiently.
+## Open a new terminal and run the same commands in the backend folder
+ `cd ../backend`
 
-## Requirements
+ `npm install`
 
-To run this application, you need to have the following installed:
+ `npm start`
 
-- **Docker**: You can install it by following the instructions in the link below:
-  - [Docker Installation Guide](https://docs.docker.com/engine/install/)
+ ### Go ahead a nd add a product (note that the price field only takes a numeric input)
+
+
+ ## 1. Choice of Base Image
+ The base image used to build the containers is `node:16-alpine3.16`. It is derived from the Alpine Linux distribution, making it lightweight and compact. 
+ Used 
+ 1. Client:`node:16-alpine3.16`
+ 2. Backend: `node:16-alpine3.16`
+ 3.Mongo : `mongo:6.0 `
+       
+
+## 2. Dockerfile directives used in the creation and running of each container.
+ I used two Dockerfiles. One for the Client and the other one for the Backend.
+
+**Client Dockerfile**
+
+```
+# Build stage
+FROM node:16-alpine3.16 as build-stage
+
+# Set the working directory inside the container
+WORKDIR /client
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies and clears the npm cache and removes any temporary files
+RUN npm install --only=production && \
+    npm cache clean --force && \
+    rm -rf /tmp/*
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the application and  remove development dependencies
+RUN npm run build && \
+    npm prune --production
+
+# Production stage
+FROM node:16-alpine3.16 as production-stage
+
+WORKDIR /client
+
+# Copy only the necessary files from the build stage
+COPY --from=build-stage /client/build ./build
+COPY --from=build-stage /client/public ./public
+COPY --from=build-stage /client/src ./src
+COPY --from=build-stage /client/package*.json ./
+
+# Set the environment variable for the app
+ENV NODE_ENV=production
+
+# Expose the port used by the app
+EXPOSE 3000
+
+# Prune the node_modules directory to remove development dependencies and clears the npm cache and removes any temporary files
+
+
+# Start the application
+CMD ["npm", "start"]
+
+```
+**Backend Dockerfile**
+
+```
+# Set base image
+FROM node:16-alpine3.16
+
+# Set the working directory
+WORKDIR /backend
+
+# Copy package.json and package-lock.json to the container
+COPY package*.json ./
+
+# Install dependencies and clears the npm cache and removes any temporary files
+RUN npm install --only=production && \
+    npm cache clean --force && \
+    rm -rf /tmp/*
+
+# Copy the rest of the application code
+COPY . .
+
+# Set the environment variable for the app
+ENV NODE_ENV=production
+
+# Expose the port used by the app
+EXPOSE 5000
+
+# Prune the node_modules directory to remove development dependencies and clears the npm cache and removes any temporary files
+RUN npm prune --production && \
+    npm cache clean --force && \
+    rm -rf /tmp/*
+
+# Start the application
+CMD ["npm", "start"]
+
+```
+
+## 3. Docker Compose Networking
+The (docker-compose.yml) defines the networking configuration for the project. It includes the allocation of application ports. The relevant sections are as follows:
+
+
+```
+services:
+  backend:
+    # ...
+    ports:
+      - "5000:5000"
+    networks:
+      - yolo-network
+
+  client:
+    # ...
+    ports:
+      - "3000:3000"
+    networks:
+      - yolo-network
   
-- **Vagrant**: For managing virtual machine environments.
-  - [Vagrant Installation Guide](https://www.vagrantup.com/docs/installation)
-  
-- **VirtualBox**: As a provider for Vagrant.
-  - [VirtualBox Installation Guide](https://www.virtualbox.org/wiki/Downloads)
+  mongodb:
+    # ...
+    ports:
+      - "27017:27017"
+    networks:
+      - yolo-network
 
-- **Terraform**: Install Terraform from the official site:
-  - [Terraform Installation Guide](https://www.terraform.io/downloads.html)
-
-## How to Launch the Application
-
-![Alt text](Vagrant.png)
-
-
-
-![Alt text](Ansible.png)
+networks:
+  yolo-network:
+    driver: bridge
+```
+In this configuration, the backend container is mapped to port 5000 of the host, the client container is mapped to port 3000 of the host, and mongodb container is mapped to port 27017 of the host. All containers are connected to the yolo-network bridge network.
 
 
+## 4.  Docker Compose Volume Definition and Usage
+The Docker Compose file includes volume definitions for MongoDB data storage. The relevant section is as follows:
 
-![Alt text](GCP.png)
+yaml
 
+```
+volumes:
+  mongodata:  # Define Docker volume for MongoDB data
+    driver: local
 
+```
+This volume, mongodb_data, is designated for storing MongoDB data. It ensures that the data remains intact and is not lost even if the container is stopped or deleted.
 
-### Stage One: Launch Using Vagrant on VirtualBox
+## 5. Git Workflow to achieve the task
 
-1. **Clone the Repository**
+To achieve the task the following git workflow was used:
 
-   Clone the repository to your local machine:
+1. Fork the repository from the original repository.
+2. Clone the repo: `git@github.com:Maubinyaachi/yolo-Microservice.git`
+3. Create a .gitignore file to exclude unnecessary     files and directories from version control.
+4. Added Dockerfile for the client to the repo:
+`git add client/Dockerfile`
+5. Add Dockerfile for the backend to the repo:
+`git add backend/dockerfile`
+6. Committed the changes:
+`git commit -m "Added Dockerfiles"`
+7. Added docker-compose file to the repo:
+`git add docker-compose.yml`
+8. Committed the changes:
+`git commit -m "Added docker-compose file"`
+9. Pushed the files to github:
+`git push `
+10. Built the client and backend images:
+`docker compose build`
+11. Pushed the built imags to docker registry:
+`docker compose push`
+12. Deployed the containers using docker compose:
+`docker compose up`
 
-   ```bash
-   git clone https://github.com/Ngumonelson123/yolo.git
-   cd yolo
-Launch the Vagrant Box
+13. Created explanation.md file and modified it as the commit messages in the repo will explain.
 
-Use the following command to provision the virtual machine:
+## 6. Debugging measures applied.
+- `docker build -t <imagename:version>` to build an image.
+  - `docker images / docker image ls` to check images built.
+  - `docker ps` to check running containers.
+   - `docker ps -a` to check all container status.
+  - `docker login` to log in to DockerHub.
+  - `docker push <username:image>` to deploy image to DockerHub.
+  - `docker compose down` followed by `docker compose up` for restarts.
+  - `docker compose logs push` to deploy it to Dockerhub.
+  - `docker compose logs <service>` for logs.
+  -`docker network ls / docker network inspect` to check and inspect available networks
 
-bash
-Copy code
-vagrant up --provision
-This command will set up the environment and install the necessary dependencies on your VirtualBox.
+## 7.  Docker image tag naming standards for ease of identification of images and containers. 
+used `docker image ls` to check images have tags as follows.
+- Images are tagged using this versioning (`v1.0.0`):
+  - `ngumonelson123/ngumo-client:v1.1.2`
+  - `ngumonelson123/ngumo-backend:v1.1.1`
 
-Stage Two: Deploy Using Terraform on Google Cloud Platform
-Change Directory to Terraform Configuration
-
-Navigate to the directory containing your Terraform configuration files (e.g., terraform/).
-
-bash
-Copy code
-cd terraform
-Initialize Terraform
-
-Run the following command to initialize Terraform:
-
-bash
-Copy code
-terraform init
-Validate Configuration
-
-Check if your Terraform configuration files are valid:
-
-bash
-Copy code
-terraform validate
-Plan the Deployment
-
-Create an execution plan to see what actions Terraform will take:
-
-bash
-Copy code
-terraform plan
-Apply the Configuration
-
-Apply the changes required to reach the desired state of the configuration:
-
-bash
-Copy code
-terraform apply
-Accessing the Application
-Once the application is up and running, you can access it via:
-
-Frontend: http://34.41.172.14:3000
-Backend: http://34.41.172.14:5000
+  !["Docker tags"](dockerhub-client-image-tag.png)
+  !["Docker tags"](dockerhub-backend-image-tag.png)
 
 
-Summary Notes for Docker Compose Setup
-The docker-compose.yml file defines three main services:
+## Orchestration IP  4
 
-1. Frontend (React)
-Service Name: ngumo-client
-Ports: Exposes port 3000 (http://34.41.172.14:3000)
-Depends On: ngumo-backend (Backend service)
-Build Context: Built from the ./client directory
-2. Backend (Node.js)
-Service Name: ngumo-backend
-Ports: Exposes port 5000 (http://34.41.172.14:5000)
-Depends On: app-ip-mongo (MongoDB service)
-Build Context: Built from the ./backend directory
-Restart Policy: Always restart on failure
-3. MongoDB (Database)
-Service Name: app-ip-mongo
-Ports: Exposes port 27017
-Volume: Uses app-mongo-data for persistent database storage
-Networking
-Custom Network: A custom bridge network named app-net is configured with the subnet 172.20.0.0/16.
-Volumes
-MongoDB Volume: app-mongo-data is used for persistent database storage.
-Dockerfile Descriptions
-Backend Dockerfile
-Base Image: Uses Node 16 based on Alpine Linux.
-Dependencies: Installs production dependencies and removes development files.
-Port: Exposes port 4000.
-Start Command: Runs the application using npm start.
-Frontend Dockerfile (Multistage)
-Build Stage: Builds the React app with production dependencies.
-Production Stage: Copies build files from the build stage.
-Port: Exposes port 3000 and starts the app using npm start.
-Key Commands
-Build and Run: docker-compose up --build
-Stop Containers: docker-compose down
+## 1. Introduce K8s Manifests
+```bash
+    kubectl apply -f persistent-volume.yaml
+    kubectl apply -f persistent-volume-claim.yaml
+    kubectl apply -f database-statefulset.yaml
+    kubectl apply -f database-service.yaml
+    kubectl apply -f backend-deployment.yaml
+    kubectl apply -f backend-service.yaml
+    kubectl apply -f frontend-deployment.yaml
+    kubectl apply -f frontend-service.yaml
+```
+## 2. Confirm  deployments
+Confirm the status of the services:
+
+    ```bash
+    kubectl get services
+    ```
+
+    Make sure the `EXTERNAL-IP` is assigned to access the client and backend.
+
+
+
+### a. MongoDB StatefulSet
+
+The MongoDB StatefulSet ensures data persistence even if pods restart:
+
+- **File**: `database-statefulset.yaml`
+- **Service**: `database-service.yaml`
+
+### b. Backend Deployment
+
+The backend service handles API requests:
+
+- **File**: `backend-deployment.yaml`
+- **Service**: `backend-service.yaml`
+
+### c. Frontend Deployment
+
+The frontend serves the React application:
+
+- **File**: `frontend-deployment.yaml`
+- **Service**: `frontend-service.yaml`
+
+## Connecting to MongoDB
+
+The backend connects to MongoDB using the following connection string:
+
+```javascript
+const mongodb_url = 'mongodb://mongo-service:27017/yolomy';
