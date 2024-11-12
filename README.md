@@ -216,9 +216,9 @@ used `docker image ls` to check images have tags as follows.
 ![Docker tags](images/dockerhub-backend-image-tag.png)
 
 ## 8. GCP image tag to show k8 clusters created and deployed
-![GCP tags](images/pvc volumes.png)
+![GCP tags](images/pvc-volumes.png)
 
-![GCP tags](images/my cluster nodes.png)
+![GCP tags](images/my-cluster-nodes.png)
 
 
 ## Orchestration IP  4
