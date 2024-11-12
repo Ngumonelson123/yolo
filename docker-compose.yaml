@@ -19,7 +19,7 @@ services:
     build:
       context: ./client  # Path to the frontend project directory
       dockerfile: Dockerfile  # Assuming Dockerfile is in the client directory
-    image: ngumonelson123/ngumo-client:v1.1.1  # Add your desired tag here
+    image: ngumonelson123/ngumo-client:v1.1.4  # Add your desired tag here
     ports:
       - "3000:3000"  # Expose port 3000 for the frontend
     depends_on:
