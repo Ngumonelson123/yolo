@@ -218,7 +218,6 @@ used `docker image ls` to check images have tags as follows.
 ## 8. GCP image tag to show k8 clusters created and deployed
 ![GCP tags](images/my-cluster-nodes.png)
 
-![GCP tags](images/pvc-volumes.png)
 
 ## Orchestration IP  4
 
