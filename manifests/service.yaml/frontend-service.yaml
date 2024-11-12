@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ngumo-client-service
+spec:
+  selector:
+    app: ngumo-client-service
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: LoadBalancer  # Exposes the service externally with a cloud provider's load balancer
